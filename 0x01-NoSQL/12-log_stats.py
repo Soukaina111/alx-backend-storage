@@ -3,7 +3,7 @@
 
 
 def print_nginx_request_logs(nginx_collection):
-    # This function prints statistics about the Nginx request logs.
+    """ This function prints statistics about the Nginx request logs."""
     print('{} logs'.format(nginx_collection.count_documents({})))
     print('Methods:')
     methods = ['GET', 'POST', 'PUT', 'PATCH', 'DELETE']
