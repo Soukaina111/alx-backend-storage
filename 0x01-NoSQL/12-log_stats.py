@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""  Python script that provides some stats about Nginx logs stored in MongoDB"""
+""" Script that provides some stats stored in MongoDB"""
 
 
 def print_nginx_request_logs(nginx_collection):
