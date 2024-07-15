@@ -12,4 +12,4 @@ def schools_by_topic(mongo_collection, topic):
             },
         },
     }
-    return [docum for docum in mongo_collection.find(topic_fil)]
+    return [docum for docum in mongo_collection.find(top_fil)]
