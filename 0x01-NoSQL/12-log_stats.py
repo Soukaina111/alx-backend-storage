@@ -2,6 +2,7 @@
 """ Script that provides some stats stored in MongoDB"""
 from pymongo import MongoClient
 
+
 def print_nginx_request_logs(nginx_collection):
     '''This function prints statistics about the Nginx request logs
     '''
