@@ -15,4 +15,3 @@ def print_nginx_request_logs(nginx_collection):
         nginx_collection.find({'method': 'GET', 'path': '/status'})
     ))
     print('{} status check'.format(status_checks_count))
-
