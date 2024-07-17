@@ -1,27 +1,38 @@
 #!/usr/bin/env python3
-''' Redis NoSQL data storage in a use case '''
+"""
+Redis NoSQL data storage.
+"""
 from functools import wraps
 from typing import Any, Callable, Union
 import redis
 import uuid
 
 
-def calls_num(method: Callable) -> Callable:
-    '''fellows the number of calls made to a method in a RedisCache class.'''
+def count_calls(method: Callable) -> Callable:
+    """
+    trackers decorator the number of calls made to a method in a Cache class.
+    """
     @wraps(method)
     def wrapper(self, *args, **kwargs) -> Any:
-        '''Returns the given method after incrementing its call counter.'''
+        """
+        Returns a method after incrementing its call counter.
+        """
         if isinstance(self._redis, redis.Redis):
             self._redis.incr(method.__qualname__)
         return method(self, *args, **kwargs)
+
     return wrapper
 
 
-def track_call_history(method: Callable) -> Callable:
-    '''Fellows the call details of a method in a RedisCache class.'''
+def call_history(method: Callable) -> Callable:
+    """
+    Tracker decoratorfor  the call details of a method in a Cache class.
+    """
     @wraps(method)
     def invoker(self, *args, **kwargs) -> Any:
-        '''Returns the method's output after storing its inputs and output.'''
+        """
+        Returns the method's output after storing its inputs and output.
+        """
         in_key = '{}:inputs'.format(method.__qualname__)
         out_key = '{}:outputs'.format(method.__qualname__)
         if isinstance(self._redis, redis.Redis):
@@ -33,8 +44,10 @@ def track_call_history(method: Callable) -> Callable:
     return invoker
 
 
-def display_call_history(fn: Callable) -> None:
-    '''shows the call history of a RedisCache class' method.'''
+def replay(fn: Callable) -> None:
+    """
+    shows the call history of a Cache class' method.
+    """
     if fn is None or not hasattr(fn, '__self__'):
         return
     redis_store = getattr(fn.__self__, '_redis', None)
@@ -57,17 +70,21 @@ def display_call_history(fn: Callable) -> None:
         ))
 
 
-class RedisCache:
-    '''Represents an object for storing data in a Redis data storage.'''
+class Cache:
+    """
+    shows an object for storing data in a Redis.
+    """
 
     def __init__(self) -> None:
         self._redis = redis.Redis()
         self._redis.flushdb(True)
 
-    @track_call_history
-    @calls_num
+    @call_history
+    @count_calls
     def store(self, data:  Union[str, bytes, int, float]) -> str:
-        '''Saves a value in a Redis data storage and returns the key.'''
+        """
+        Stores a value in a Redis data storage and returns the key.
+        """
         data_key = str(uuid.uuid4())
         self._redis.set(data_key, data)
         return data_key
@@ -77,14 +94,20 @@ class RedisCache:
             key: str,
             fn: Callable = None,
             ) -> Union[str, bytes, int, float]:
-        '''gets a value from a Redis data storage.'''
+        """
+        Retrieves a value from a Redis data storage.
+        """
         data = self._redis.get(key)
         return fn(data) if fn is not None else data
 
     def get_str(self, key: str) -> str:
-        '''gets a string value from a Redis data storage.'''
+        """
+        Retrieves a string value from a Redis data storage.
+        """
         return self.get(key, lambda x: x.decode('utf-8'))
 
     def get_int(self, key: str) -> int:
-        '''gets an integer value from a Redis data storage.'''
+        """
+        Shows an integer value from a Redis data storage.
+        """
         return self.get(key, lambda x: int(x))
